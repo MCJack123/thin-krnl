@@ -1,0 +1,3 @@
+# thin-krnl
+Some sort of kernel for x86 processors. The goal is to have a system that feels like the Commodore 64, allowing random access and jumping to memory, as well as requiring hard work to implement basic drivers.  
+Please do not try running this for real, as there are zero protections put in place. I do not take responsibility for any harm done to your files, memory, CPU, etc. because you did not heed these warnings. No warranty included.
