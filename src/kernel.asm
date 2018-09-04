@@ -13,17 +13,18 @@ section .text
 global start
 extern kmain	        ;kmain is defined in the c file
 
-global usleep
-usleep:
-    push ebp
-    mov ebp,esp
-    mov eax,ebp
-    mov ah,0x86
-    mov edx,eax
-    int 0x15
-    mov esp,ebp
-    pop ebp
-    ret
+gdtr DW 0 ; For limit storage
+DD 0 ; For base storage
+
+global setIdt
+setIdt:
+   mov   eax, [esp + 4]
+   add   eax, 0x100000
+   mov   [gdtr + 2], eax
+   mov   ax, [esp + 8]
+   mov   [gdtr], ax
+   lidt  [gdtr]
+   ret
 
 global get_mem_size
 get_mem_size:

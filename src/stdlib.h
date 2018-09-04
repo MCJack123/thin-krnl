@@ -14,12 +14,13 @@ typedef _Bool bool;
 // Assembly bridging functions for I/O.
 extern unsigned char inb(unsigned short);
 extern void outb(unsigned short, unsigned char);
+extern void io_wait(void);
 
 // Returns an array of uint32's with the memory size & start position.
 extern unsigned int* get_mem_size(void);
 
-// Sleep a number of us.
-extern void usleep(int);
+// Sleep a number of us. (broken)
+//extern void usleep(int);
 
 // Sleep a number of ??.
 extern void rsleep(int);

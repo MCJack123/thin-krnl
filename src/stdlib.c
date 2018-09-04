@@ -31,6 +31,13 @@ void outb(unsigned short port, unsigned char val)
      * %1 expands to %dx because  port  is a uint16_t.  %w1 could be used if we had the port number a wider C type */
 }
 
+void io_wait(void) {
+    /* TODO: This is probably fragile. */
+    asm volatile ( "jmp 1f\n\t"
+                   "1:jmp 2f\n\t"
+                   "2:" );
+}
+
 void memcpy(void * dest, void * src, unsigned int size) {
     char* csrc = (char*)src;
     char* cdest = (char*)dest;

@@ -1,8 +1,8 @@
 #include "liballoc.h"
-#define PAGE_SIZE 512
+#define PAGE_SIZE 4096
 
 //unsigned int allocated_page_changes[4096]; // later?
-void* base_ptr = (void*)0x40000;
+void* base_ptr = (void*)0x400000;
 int pages_allocated = 0;
 
 int liballoc_lock() {
@@ -14,6 +14,7 @@ int liballoc_unlock() {
 }
 
 void* liballoc_alloc(int pages) {
+    if (&(((char*)base_ptr)[PAGE_SIZE * pages_allocated++]) > 0x00F00000 && &(((char*)base_ptr)[PAGE_SIZE * pages_allocated++]) < 0x00FFFFFF) base_ptr = (void*)0x01000000;
     return (void*)&(((char*)base_ptr)[PAGE_SIZE * pages_allocated++]);
 }
 
