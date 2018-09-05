@@ -18,9 +18,29 @@
 
 #define PIC_EOI		    0x20		/* End-of-interrupt command code */
 
+struct GDT {
+    int base;
+    int limit;
+    unsigned char type;
+};
+
+struct IDTDescr {
+   unsigned short offset_1; // offset bits 0..15
+   unsigned short selector; // a code segment selector in GDT or LDT
+   unsigned char zero;      // unused, set to 0
+   unsigned char type_attr; // type and attributes, see below
+   unsigned short offset_2; // offset bits 16..31
+};
+
+struct interrupt_frame
+{
+    unsigned short ip;
+    unsigned short cs;
+    unsigned short flags;
+    unsigned short sp;
+    unsigned short ss;
+};
+
 extern void * interrupt_table;
 
-extern void setIdt(void *, unsigned int);
-
-extern void PIC_remap(int offset1, int offset2);
-extern void PIC_sendEOI(unsigned char irq);
+extern void setupInterrupts();

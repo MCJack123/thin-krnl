@@ -14,16 +14,49 @@ global start
 extern kmain	        ;kmain is defined in the c file
 
 gdtr DW 0 ; For limit storage
+idtr DW 0 ; For limit storage
 DD 0 ; For base storage
 
-global setIdt
-setIdt:
+global setGdt
+setGdt:
+   ;mov   edx, [ebp + 4]
    mov   eax, [esp + 4]
    add   eax, 0x100000
    mov   [gdtr + 2], eax
    mov   ax, [esp + 8]
    mov   [gdtr], ax
-   lidt  [gdtr]
+   lgdt  [gdtr]
+   mov   edx, [esp + 12]
+   mov   [ebp + 4], edx
+   ret
+   ;jmp   edx
+
+global setIdt
+setIdt:
+   ;mov   edx, [ebp + 4]
+   mov   eax, [esp + 4]
+   add   eax, 0x100000
+   mov   [idtr + 2], eax
+   mov   ax, [esp + 8]
+   mov   [idtr], ax
+   lidt  [idtr]
+   mov   edx, [esp + 12]
+   mov   [ebp + 4], edx
+   ret
+   ;jmp   edx
+
+global reloadSegments
+reloadSegments:
+   ; Reload CS register containing code selector:
+   jmp   0x08:.reload_CS ; 0x08 points at the new code selector
+.reload_CS:
+   ; Reload data segment registers:
+   mov   ax, 0x10 ; 0x10 points at the new data selector
+   mov   ds, ax
+   mov   es, ax
+   mov   fs, ax
+   mov   gs, ax
+   mov   ss, ax
    ret
 
 global get_mem_size
