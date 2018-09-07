@@ -20,14 +20,40 @@ unsigned int irq_##irq##_handler()\
    return (unsigned int) &&isr_start;\
 }
 
+#define _set_gate(gate_addr,type,dpl,addr) \
+__asm__ ("movw %%dx,%%ax\n\t" \
+	"movw %0,%%dx\n\t" \
+	"movl %%eax,%1\n\t" \
+	"movl %%edx,%2" \
+	: \
+	: "i" ((short) (0x8000+(dpl<<13)+(type<<8))), \
+	"o" (*((char *) (gate_addr))), \
+	"o" (*(4+(char *) (gate_addr))), \
+	"d" ((char *) (addr)),"a" (0x00080000))
+
+#define set_intr_gate(n,addr) \
+	_set_gate(&idt_descr[n],14,0,addr)
+
+#define set_trap_gate(n,addr) \
+	_set_gate(&idt_descr[n],15,0,addr)
+
+#define set_system_gate(n,addr) \
+	_set_gate(&idt_descr[n],15,3,addr)
+
 void * interrupt_table = (void*)0x200020;
 void * myTss = (void*)0x300020;
 struct GDT gdtTable[4];
 struct IDTDescr idtTable[16];
 
-extern void setIdt(void *, unsigned int, unsigned int);
+typedef struct desc_struct {
+	unsigned long a,b;
+} desc_table[256];
+
+struct desc_struct* idt_descr = (struct desc_struct*)0x200020;
+extern void setIdt(void);
 extern void setGdt(void *, unsigned int, unsigned int);
 extern void reloadSegments();
+
 
 // section: interrupt handlers
 
@@ -40,6 +66,7 @@ void irq_handler(unsigned int irq) {
     print(htoa(frame->ss));*/
     print(htoa(irq));
     print("\n");
+    beep();
 }
 
 /* reinitialize the PIC controllers, giving them specified vector offsets
@@ -75,6 +102,7 @@ create_isr_wrapper(0x0C);
 create_isr_wrapper(0x0D);
 create_isr_wrapper(0x0E);
 create_isr_wrapper(0x0F);
+create_isr_wrapper(0x10);
 
 void setupIDT() {
     //for (int i = 0; i < 256; i++)
@@ -139,6 +167,10 @@ void PIC_remap(int offset1, int offset2)
 	outb(PIC2_DATA, a2);
 }
 
+void remap_pic() {
+    PIC_remap(0x20, 0x28);
+}
+
 void PIC_sendEOI(unsigned char irq)
 {
 	if(irq >= 8)
@@ -176,24 +208,55 @@ void IRQ_clear_mask(unsigned char IRQline) {
 }
 
 void setup_p3() {
-    for (int i = 0; i < 16; i++) IRQ_clear_mask(i);
-    asm("mov edx,[0x100018]\nmov [ebp + 4],edx"); // needs fix
+    //for (int i = 0; i < 16; i++) IRQ_clear_mask(i);
+    //asm("mov (0x100018),%edx\nmov %edx,4(%ebp)"); // needs fix
     //asm("sti");
 }
 
 void setup_p2() {
-    reloadSegments();
-    setupIDT();
-    PIC_remap(0x20, 0x28);
-    setIdt(&idtTable, 2048, (unsigned int)&setup_p3);
+    //reloadSegments();
+    //setupIDT();
+    //PIC_remap(0x20, 0x28);
+    //setIdt(&idtTable, 2048, (unsigned int)&setup_p3);
 }
 
 void setupInterrupts() {
-    asm("mov edx,[ebp + 4]\nmov [0x100018],edx"); // needs fix
-    unsigned char * gdt_table = (unsigned char*)0x100020;
-    encodeGdtEntry(gdt_table, gdtTable[0]);
-    encodeGdtEntry(&gdt_table[8], gdtTable[1]);
-    encodeGdtEntry(&gdt_table[16], gdtTable[2]);
-    encodeGdtEntry(&gdt_table[24], gdtTable[3]);
-    setGdt((void*)gdt_table, 32, (unsigned int)&setup_p2);
+    //asm("mov 4(%ebp),%edx\nmov %edx,(0x100018)"); // needs fix
+    //unsigned char * gdt_table = (unsigned char*)0x100020;
+    //encodeGdtEntry(gdt_table, gdtTable[0]);
+    //encodeGdtEntry(&gdt_table[8], gdtTable[1]);
+    //encodeGdtEntry(&gdt_table[16], gdtTable[2]);
+    //encodeGdtEntry(&gdt_table[24], gdtTable[3]);
+    //setGdt((void*)gdt_table, 32, (unsigned int)&setup_p2);
+    setIdt();
+}
+
+void trap_init(void)
+{
+    int i;
+
+    set_trap_gate(0,&irq_0x00_handler);
+    set_trap_gate(1,&irq_0x01_handler);
+    set_trap_gate(2,&irq_0x02_handler);
+    set_system_gate(3,&irq_0x03_handler);   /* int3-5 can be called from all */
+    set_system_gate(4,&irq_0x04_handler);
+    set_system_gate(5,&irq_0x05_handler);
+    set_trap_gate(6,&irq_0x06_handler);
+    set_trap_gate(7,&irq_0x07_handler);
+    set_trap_gate(8,&irq_0x08_handler);
+    set_trap_gate(9,&irq_0x09_handler);
+    set_trap_gate(10,&irq_0x0A_handler);
+    set_trap_gate(11,&irq_0x0B_handler);
+    set_trap_gate(12,&irq_0x0C_handler);
+    set_trap_gate(13,&irq_0x0D_handler);
+    set_trap_gate(14,&irq_0x0E_handler);
+    set_trap_gate(15,&irq_0x0F_handler);
+    set_trap_gate(16,&irq_0x10_handler);
+    for (i=17;i<32;i++)
+        set_trap_gate(i,&irq_0x00_handler);
+/*  __asm__("movl $0x3ff000,%%eax\n\t"
+        "movl %%eax,%%db0\n\t"
+        "movl $0x000d0303,%%eax\n\t"
+        "movl %%eax,%%db7"
+        :::"ax");*/
 }

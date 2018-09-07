@@ -47,9 +47,21 @@ bool iscode(char code) {
     return code & 0x80;
 }
 
-unsigned char get_scancode() {
+// old
+/*unsigned char get_scancode() {
     while (!(inb(0x64) & 1));
     return inb(0x60);
+}*/
+
+unsigned char get_scancode() {
+    unsigned char c=0;
+    do {
+        if(inb(0x60)!=c) {
+            c=inb(0x60);
+            if(c>0)
+                return c;
+        }
+    } while(1);
 }
 
 char getch() {
@@ -236,6 +248,7 @@ const char * scanl() {
     char* backup;
     char* buffer = (char*)malloc(16);
     buffer[0] = '\0';
+    rsleep(200000000);
     while (true) {
         ch = getch();
         if (ch == 0) continue;
@@ -264,6 +277,7 @@ const char * scanl() {
             buffer[len] = '\0';
             print(ctoa(ch));
         }
+        rsleep(200000000);
     }
 }
 

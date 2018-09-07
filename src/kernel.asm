@@ -12,53 +12,61 @@ section .text
 
 global start
 extern kmain	        ;kmain is defined in the c file
+extern trap_init
+extern remap_pic
 
-gdtr DW 0 ; For limit storage
-idtr DW 0 ; For limit storage
+;gdtr DW 0 ; For limit storage
+;idt_descr DW 0 ; For limit storage
 DD 0 ; For base storage
-
-global setGdt
-setGdt:
-   ;mov   edx, [ebp + 4]
-   mov   eax, [esp + 4]
-   add   eax, 0x100000
-   mov   [gdtr + 2], eax
-   mov   ax, [esp + 8]
-   mov   [gdtr], ax
-   lgdt  [gdtr]
-   mov   edx, [esp + 12]
-   mov   [ebp + 4], edx
-   ret
-   ;jmp   edx
+;global idt_descr
+;global setGdt
+;setGdt:
+    ;mov   edx, [ebp + 4]
+    ;mov   eax, [esp + 4]
+    ;add   eax, 0x100000
+    ;mov   [gdtr + 2], eax
+    ;mov   ax, [esp + 8]
+    ;mov   [gdtr], ax
+    ;lgdt  [gdtr]
+    ;mov   edx, [esp + 12]
+    ;mov   [ebp + 4], edx
+    ;ret
+    ;jmp   edx
 
 global setIdt
 setIdt:
-   ;mov   edx, [ebp + 4]
-   mov   eax, [esp + 4]
-   add   eax, 0x100000
-   mov   [idtr + 2], eax
-   mov   ax, [esp + 8]
-   mov   [idtr], ax
-   lidt  [idtr]
-   mov   edx, [esp + 12]
-   mov   [ebp + 4], edx
-   ret
-   ;jmp   edx
+    ;mov   edx, [ebp + 4]
+    ;mov   eax, [esp + 4]
+    ;add   eax, 0x100000
+    ;mov   [idtr + 2], eax
+    ;mov   ax, [esp + 8]
+    ;mov   [idtr], ax
+    ;lidt  [idtr]
+    ;mov   edx, [esp + 12]
+    ;mov   [ebp + 4], edx
+
+    ;lidt     idt_48
+    lidt [0x200020]
+    call remap_pic
+    call trap_init
+    sti
+    ret
+    ;jmp   edx
 
 global reloadSegments
 reloadSegments:
-   ; Reload CS register containing code selector:
-   jmp   0x08:.reload_CS ; 0x08 points at the new code selector
+    ; Reload CS register containing code selector:
+    jmp   0x08:.reload_CS ; 0x08 points at the new code selector
 .reload_CS:
-   ; Reload data segment registers:
-   mov   ax, 0x10 ; 0x10 points at the new data selector
-   mov   ds, ax
-   mov   es, ax
-   mov   fs, ax
-   mov   gs, ax
-   mov   ss, ax
-   ret
-
+    ; Reload data segment registers:
+    mov   ax, 0x10 ; 0x10 points at the new data selector
+    mov   ds, ax
+    mov   es, ax
+    mov   fs, ax
+    mov   gs, ax
+    mov   ss, ax
+    ret
+ 
 global get_mem_size
 get_mem_size:
     mov edx,0xdfffffff ;set edx to 0xdfffff
@@ -124,6 +132,8 @@ start:
   mov esp, stack_space	;set stack pointer
   call kmain
   hlt		 	;halt the CPU
+
+
 
 section .bss
 resb 8192		;8KB for stack
