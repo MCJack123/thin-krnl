@@ -4,7 +4,7 @@ section .text
 
 global ata_read_sectors
 ata_read_sectors:
-    
+    ret
 
 ; do a singletasking PIO ATA read
 ; inputs: ebx = # of sectors to read, edi -> dest buffer, esi -> driverdata struct, ebp = 4b LBA
