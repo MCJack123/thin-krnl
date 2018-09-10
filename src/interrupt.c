@@ -1,5 +1,5 @@
-#include "interrupt.h"
-#include "stdio.h"
+#include <interrupt.h>
+#include <stdio.h>
 
 #define create_isr_wrapper(irq)\
 unsigned int irq_##irq##_handler()\

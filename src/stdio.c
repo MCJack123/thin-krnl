@@ -3,7 +3,7 @@
  * Input/output functions (implementation)
  */
 
-#include "stdio.h"
+#include <stdio.h>
 
 const char* ps2codes_sc1 = "\0\0321234567890-=\032\032qwertyuiop[]\032\032asdfghjkl;'`\032\\zxcvbnm,./\032\0\032 \032\032\032\032\032\032\032\032\032\032\032\032\032\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\032\032";
 const char* ps2codes_sc1_upper = "\0\032!@#$%^&*()_+\032\032QWERTYUIOP{}\032\032ASDFGHJKL:\"~\032|ZXCVBNM<>?\032\0\032 \032\032\032\032\032\032\032\032\032\032\032\032\032\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\032\032";
@@ -48,12 +48,12 @@ bool iscode(char code) {
 }
 
 // old
-/*unsigned char get_scancode() {
+unsigned char get_scancode() {
     while (!(inb(0x64) & 1));
     return inb(0x60);
-}*/
+}
 
-unsigned char get_scancode() {
+/*unsigned char get_scancode() {
     unsigned char c=0;
     do {
         if(inb(0x60)!=c) {
@@ -62,7 +62,7 @@ unsigned char get_scancode() {
                 return c;
         }
     } while(1);
-}
+}*/
 
 char getch() {
     return convert_ps2_code(get_scancode());
@@ -116,6 +116,7 @@ void scroll(int lines) {
             vidptr[(((i-lines)*80)+j)*2+1] = 0x07;
         }
     }
+    current_offset -= 160;
 }
 
 unsigned int printm(const char *str, unsigned int i) {
@@ -147,6 +148,7 @@ void print(const char * str) {
         //if (current_offset % 2 != 0) {
         //    beep();
         //}
+        if (current_offset > (int)vidptr + (80 * 25 * 2)) scroll(1);
         if (control > 0) {
             /* ansi (not done) *
             if (control == 1) {
@@ -248,7 +250,7 @@ const char * scanl() {
     char* backup;
     char* buffer = (char*)malloc(16);
     buffer[0] = '\0';
-    rsleep(200000000);
+    //rsleep(200000000);
     while (true) {
         ch = getch();
         if (ch == 0) continue;
@@ -277,7 +279,7 @@ const char * scanl() {
             buffer[len] = '\0';
             print(ctoa(ch));
         }
-        rsleep(200000000);
+        //rsleep(200000000);
     }
 }
 

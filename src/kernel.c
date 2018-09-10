@@ -9,7 +9,6 @@
 void kmain(void) {
     unsigned int* lower;
     const char * text;
-    setupInterrupts();
     //lasm("sti");
     clear();
 	print("Calculating memory...\n");
@@ -17,8 +16,11 @@ void kmain(void) {
     print("Memory size: ");
     print(itoa(lower[0]));
     print(" bytes\n");
+    io_wait();
+    //rsleep(200000000);
+    //setupInterrupts();
     print("\n> ");
-    rsleep(200000000);
+    //rsleep(200000000);
     text = scanl();
     //while (true) ;
     print("\0330eText: ");

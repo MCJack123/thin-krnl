@@ -3,13 +3,18 @@
  * Useful functions (implementation)
  */
 
-#include "stdlib.h"
+#include <stdlib.h>
 #define hnib(n) (n & 0xF0) >> 4
 #define lnib(n) n & 0x0F
 
 const char* hexnums = "0123456789abcdef";
 
 void rsleep(int t) {
+    beep();
+    for (int i = 0; i < t; i++);
+}
+
+void rnsleep(int t) {
     for (int i = 0; i < t; i++);
 }
 
@@ -154,7 +159,7 @@ static void nosound() {
 //Make a beep
 void beep() {
     play_sound(500);
-    rsleep(5000000);
+    rnsleep(5000000);
 	nosound();
     //set_PIT_2(old_frequency);
 }
