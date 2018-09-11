@@ -15,6 +15,11 @@ extern kmain	        ;kmain is defined in the c file
 extern trap_init
 extern remap_pic
 
+start:
+  cli 			;block interrupts
+  mov esp, stack_space	;set stack pointer
+  call kmain
+  hlt		 	;halt the CPU
 ;gdtr DW 0 ; For limit storage
 ;idt_descr DW 0 ; For limit storage
 DD 0 ; For base storage
@@ -126,12 +131,6 @@ probeRAM:
     pop ebx
     pop eax
     ret
-
-start:
-  cli 			;block interrupts
-  mov esp, stack_space	;set stack pointer
-  call kmain
-  hlt		 	;halt the CPU
 
 
 

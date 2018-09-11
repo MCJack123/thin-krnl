@@ -7,7 +7,7 @@ ODIR=obj
 _DEPS = stdlib.h liballoc.h stdio.h interrupt.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = interrupt.o kernel_alloc.o kernel.o kasm.o liballoc.o stdio.o stdlib.o
+_OBJ = kasm.o kernel.o interrupt.o kernel_alloc.o liballoc.o stdio.o stdlib.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _DRIVER_OBJ = ata.o asm_ata.o

@@ -21,8 +21,10 @@ struct driverdata {
     unsigned int partition_size;
     unsigned char dcr;
     unsigned int start_lba;
-    
+    unsigned short task_file;
+    unsigned char slavebit;
 };
 
+extern void ata_soft_reset(struct DEVICE *dev);
 extern int ata_detect_dev_type(bool slavebit, struct DEVICE *ctrl);
-extern void ata_read_sectors(void * dest, unsigned short sectors, unsigned int lba);
+extern void ata_read_sectors(void * dest, unsigned short sectors, unsigned int lba, struct devicedata *device);

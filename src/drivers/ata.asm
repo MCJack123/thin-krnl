@@ -1,9 +1,25 @@
 bits 32
 
+struc driverdata
+    dd_prtlen: resd 1
+    dd_dcr:    resb 1
+    dd_stLBA:  resd 1
+    dd_tf:     resw 1
+    dd_sbits:  resb 1
+endstruc
+
 section .text
 
 global ata_read_sectors
 ata_read_sectors:
+    mov ebx, [ebp + 12]
+    mov edi, [ebp + 8]
+    mov esi, [ebp + 18]
+    mov eax, [ebp + 14]
+    push ebp
+    mov ebp, eax
+    call read_ata_st
+    pop ebp
     ret
 
 ; do a singletasking PIO ATA read

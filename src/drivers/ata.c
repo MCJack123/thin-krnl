@@ -1,9 +1,14 @@
 #include <drivers/ata.h>
 
+void ata_soft_reset(struct DEVICE *dev){
+	outb(dev->dev_ctl, 0x04);
+	outb(dev->dev_ctl, 0x00);
+}
+
 /* on Primary bus: ctrl->base =0x1F0, ctrl->dev_ctl =0x3F6. REG_CYL_LO=4, REG_CYL_HI=5, REG_DEVSEL=6 */
-int detect_devtype (bool slavebit, struct DEVICE *ctrl)
+int ata_detect_dev_type (bool slavebit, struct DEVICE *ctrl)
 {
-	ata_soft_reset(ctrl->dev_ctl);		/* waits until master drive is ready again */
+	ata_soft_reset(ctrl);		/* waits until master drive is ready again */
 	outb(ctrl->base + REG_DEVSEL, 0xA0 | slavebit<<4);
 	inb(ctrl->dev_ctl);			/* wait 400ns for drive select to work */
 	inb(ctrl->dev_ctl);
