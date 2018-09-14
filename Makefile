@@ -4,10 +4,10 @@ LIBALLOC_CFLAGS=-O2 -fno-builtin -fPIC -Wall $(CFLAGS)
 IDIR=src
 ODIR=obj
 
-_DEPS = stdlib.h liballoc.h stdio.h interrupt.h
+_DEPS = stdlib.h liballoc.h stdio.h interrupt.h interpret.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = kasm.o kernel.o interrupt.o kernel_alloc.o liballoc.o stdio.o stdlib.o
+_OBJ = kasm.o kernel.o interrupt.o kernel_alloc.o liballoc.o stdio.o stdlib.o interpret.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 _DRIVER_OBJ = ata.o asm_ata.o

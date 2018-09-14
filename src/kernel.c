@@ -6,11 +6,14 @@
 #include <stdio.h>
 #include <interrupt.h>
 #include <drivers/ata.h>
+#include <interpret.h>
 
 void kmain(void) {
     unsigned int* lower;
-    const char * text;
-    void * buf;
+    char * text;
+    const char * done = " Done.\n";
+    void * buf = (void*)0x500000;
+    unsigned int i;
     struct driverdata disk;
     //lasm("sti");
     clear();
@@ -22,24 +25,26 @@ void kmain(void) {
     //io_wait();
     //rsleep(200000000);
     //setupInterrupts();
-    print("Fetching sector...");
-    disk.slavebit = 0;
+    /*disk.slavebit = 0;
     disk.start_lba = 2048;
     disk.dcr = 0;
-    disk.task_file = 0;
+    disk.task_file = 0x1F0;
     disk.partition_size = 64*1048576;
-    buf = malloc(512);
-    ata_read_sectors(buf, 1, 9082, &disk);
-    print(" Done.\n");
-    print((const char *)buf);
-    print("\n> ");
-    //rsleep(200000000);
-    text = scanl();
-    //while (true) ;
-    print("\0330eText: ");
+    //buf = malloc(512);
+    for (i = 0; i < 1024; i++) ((char*)buf)[i] = 0;
+    print("Fetching sector...");
+    ata_lba_read(buf, 1, 9000);
+    print(done);*/
+    print("\nThinKrnl console\nType 'help' for help.\n");
+    while (true) {
+        print("> ");
+        text = scanl();
+        if (run_command(text)) break;
+    }
+    /*print("\0330eText: ");
     print(text);
-    print("\03307");
+    print("\03307");*/
     //beep();
-    print("\n\n\03304CPU halted.");
+    print("\n\n\03304System halted.");
     return;
 }

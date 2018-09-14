@@ -1,3 +1,5 @@
+#ifndef THINKRNL_INTERRUPT_H
+#define THINKRNL_INTERRUPT_H
 #include <stdlib.h>
 #define ICW1_ICW4	    0x01		/* ICW4 (not) needed */
 #define ICW1_SINGLE	    0x02		/* Single (cascade) mode */
@@ -44,3 +46,5 @@ struct interrupt_frame
 extern void * interrupt_table;
 
 extern void setupInterrupts();
+
+#endif

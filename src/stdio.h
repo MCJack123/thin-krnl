@@ -3,7 +3,9 @@
  * Input/output functions
  */
 
-#include "stdlib.h"
+#ifndef THINKRNL_STDIO_H
+#define THINKRNL_STDIO_H
+#include <stdlib.h>
 
 // PS/2 special keyboard codes.
 typedef enum ps2code_ext_t {
@@ -74,3 +76,5 @@ extern const char * scanlp(const char *);
 // Variation: Start at offset.
 extern const char * scanlm(unsigned int);
 extern const char * scanlmp(unsigned int, const char *);
+
+#endif

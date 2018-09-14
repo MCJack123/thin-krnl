@@ -1,3 +1,5 @@
+#ifndef THINKRNL_DRIVER_ATA_H
+#define THINKRNL_DRIVER_ATA_H
 #include <stdlib.h>
 
 #define REG_CYL_LO 4
@@ -27,4 +29,7 @@ struct driverdata {
 
 extern void ata_soft_reset(struct DEVICE *dev);
 extern int ata_detect_dev_type(bool slavebit, struct DEVICE *ctrl);
-extern void ata_read_sectors(void * dest, unsigned short sectors, unsigned int lba, struct devicedata *device);
+//extern void ata_read_sectors(void * dest, unsigned short sectors, unsigned int lba, struct devicedata *device);
+extern void ata_lba_read(void * dest, unsigned short sectors, unsigned int lba);
+
+#endif

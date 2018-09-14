@@ -46,8 +46,19 @@ void io_wait(void) {
 void memcpy(void * dest, void * src, unsigned int size) {
     char* csrc = (char*)src;
     char* cdest = (char*)dest;
-    int i;
-    for (i = 0; i < size; i++) cdest[i] = csrc[i];
+    for (int i = 0; i < size; i++) cdest[i] = csrc[i];
+}
+
+int atoi(const char * str) {
+    int res = 0; // Initialize result
+  
+    // Iterate through all characters of input string and
+    // update result
+    for (int i = 0; str[i] != '\0'; ++i)
+        res = res*10 + str[i] - '0';
+  
+    // return result.
+    return res;
 }
 
 const char* itoa(unsigned int n) {
@@ -113,7 +124,7 @@ const char * ctoa(char c) {
 unsigned int strlen(const char * str) {
     unsigned int retval = 0;
     while (str[++retval] != '\0') {}
-    return retval-2;
+    return retval;
 }
 
 const char* strcat(const char * str1, const char * str2) {
@@ -132,6 +143,34 @@ const char* strcat(const char * str1, const char * str2) {
 
     return (const char*)buffer; // unsafe?
 }
+
+bool strcmp(const char * str1, const char * str2) {
+    int i, len = strlen(str1);
+    if (len != strlen(str2)) return false;
+    for (i = 0; i < len; i++) if (str1[i] != str2[i]) return false;
+    return true;
+}
+
+string_tokens_t * strtok(const char * str, char delim) {
+    string_tokens_t * retval;
+    int token_lengths[256]; // if there's more the pointer will just overflow; unsafe but should work
+    int j, offset = 0;
+    retval->count = 0;
+    token_lengths[0] = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == delim) token_lengths[++retval->count] = 0;
+        else token_lengths[retval->count]++;
+    }
+    retval->count++;
+    for (j = 0; j < retval->count; j++) {
+        retval->tokens[j] = (char*)malloc(token_lengths[j]);
+        memcpy(retval->tokens[j], &str[offset], token_lengths[j]);
+        retval->tokens[j][token_lengths[j]] = '\0';
+        offset += token_lengths[j] + 1;
+    }
+    return retval;
+}
+
 //Play sound using built in speaker
 static void play_sound(unsigned int nFrequence) {
 	unsigned int Div;

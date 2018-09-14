@@ -148,7 +148,7 @@ void print(const char * str) {
         //if (current_offset % 2 != 0) {
         //    beep();
         //}
-        if (current_offset > (int)vidptr + (80 * 25 * 2)) scroll(1);
+        if (current_offset > (80 * 25)) scroll(1);
         if (control > 0) {
             /* ansi (not done) *
             if (control == 1) {
