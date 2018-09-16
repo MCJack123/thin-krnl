@@ -104,19 +104,20 @@ void clear(void) {
 void scroll(int lines) {
     char *vidptr = (char*)0xb8000; 	//video mem begins here.
     int i, j;
-    for (i = lines; i < 25; i++) {
+    /*for (i = lines; i < 25; i++) {
         for (j = 0; j < 80; j++) {
             vidptr[(((i-lines)*80)+j)*2] = vidptr[((i*80)+j)*2];
             vidptr[(((i-lines)*80)+j)*2+1] = vidptr[((i*80)+j)*2+1];
         }
-    }
-    for (; i < lines + 25; i++) {
+    }*/
+    memcpy(vidptr, &vidptr[lines*160], 4000-(lines*160));
+    for (i = 25 - lines; i < 25; i++) {
         for (j = 0; j < 80; j++) {
-            vidptr[(((i-lines)*80)+j)*2] = 0;
-            vidptr[(((i-lines)*80)+j)*2+1] = 0x07;
+            vidptr[(((i)*80)+j)*2] = 0;
+            vidptr[(((i)*80)+j)*2+1] = 0x07;
         }
     }
-    current_offset -= 160;
+    current_offset -= 80 * lines;
 }
 
 unsigned int printm(const char *str, unsigned int i) {
@@ -148,7 +149,7 @@ void print(const char * str) {
         //if (current_offset % 2 != 0) {
         //    beep();
         //}
-        if (current_offset > (80 * 25)) scroll(1);
+        if (current_offset + 2 > (80 * 25)) scroll(1);
         if (control > 0) {
             /* ansi (not done) *
             if (control == 1) {

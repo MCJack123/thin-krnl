@@ -49,16 +49,31 @@ void memcpy(void * dest, void * src, unsigned int size) {
     for (int i = 0; i < size; i++) cdest[i] = csrc[i];
 }
 
+char htoi(char c) {
+    if (c >= '0' && c <= '9') return c - '0';
+    else if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+    else if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+    beep();
+    return 0;
+}
+
 int atoi(const char * str) {
     int res = 0; // Initialize result
-  
-    // Iterate through all characters of input string and
-    // update result
-    for (int i = 0; str[i] != '\0'; ++i)
-        res = res*10 + str[i] - '0';
-  
-    // return result.
-    return res;
+    int i;
+    if (str[0] == '0' && str[1] == 'x') {
+        for (i = 2; str[i] != '\0'; i++) 
+            res = (res << 4) + htoi(str[i]);
+        return res;
+    } else {
+    
+        // Iterate through all characters of input string and
+        // update result
+        for (i = str[0] == '-'; str[i] != '\0'; ++i)
+            res = res*10 + str[i] - '0';
+    
+        // return result.
+        return res * (str[0] == '-' ? -1 : 1);
+    }
 }
 
 const char* itoa(unsigned int n) {
@@ -97,18 +112,18 @@ const char* itoa(unsigned int n) {
     return (const char*)buffer; // unsafe?
 }
 
-const char * htoa(unsigned int n) {
+const char * htoa(unsigned int n, int z) {
     char* bytes = (char*)&n;
     char* buffer;
     int i = 0;
-    buffer = (char*)malloc(11);
+    buffer = (char*)malloc(z*2+3);
     buffer[0] = '0';
     buffer[1] = 'x';
-    buffer[10] = '\0';
+    buffer[z*2+2] = '\0';
 
-    for (i = 0; i < 4; i++) {
-        buffer[9-(i*2)] = hexnums[lnib(bytes[i])];
-        buffer[8-(i*2)] = hexnums[hnib(bytes[i])];
+    for (i = 0; i < z; i++) {
+        buffer[z*2+1-(i*2)] = hexnums[lnib(bytes[i])];
+        buffer[z*2-(i*2)] = hexnums[hnib(bytes[i])];
     }
 
     return (const char*)buffer;

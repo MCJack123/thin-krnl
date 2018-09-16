@@ -64,7 +64,7 @@ void irq_handler(unsigned int irq) {
     print(htoa(frame->flags));
     print(htoa(frame->sp));
     print(htoa(frame->ss));*/
-    print(htoa(irq));
+    print(htoa(irq, 4));
     print("\n");
     beep();
 }

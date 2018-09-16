@@ -42,7 +42,7 @@ extern int atoi(const char *);
 extern const char * itoa(unsigned int);
 
 // Returns a string with the hex of n.
-extern const char * htoa(unsigned int);
+extern const char * htoa(unsigned int, int);
 
 // Converts a char into a string.
 extern const char * ctoa(char);
