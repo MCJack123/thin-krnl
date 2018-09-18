@@ -5,6 +5,7 @@
 extern bool run_command(const char * command);
 extern int command_help();
 extern int command_retval();
+extern int command_symbols();
 extern int command_echo(int argc, const char * argv[]);
 extern int command_ata_read(int argc, const char * argv[]);
 extern int command_poke(int argc, const char * argv[]);

@@ -40,24 +40,30 @@ DD 0 ; For base storage
 
 global callC
 callC:
-    push eax
-    push ebx
-    push ebp
-    mov ebp, esp
-    mov ebx, [ebp + 16]
-    mov eax, [ebp + 4]
-    mov [ebp + 8], eax
-    mov [ebp + 4], ebp
-    add ebp, 4
-    call ebx
-    ; is this even necessary anymore?
-    mov eax, [ebp + 4]
-    mov [ebp], eax
-    mov eax, [ebp + 8]
-    mov [ebp + 4], eax
-    pop ebp
+    pop edx
     pop ebx
-    pop eax
+    pop ecx
+    pop esi
+    mov [0x312589], edx
+    push esi
+    push ecx
+    push ebx
+    push edx
+    mov eax, 0
+.loopf:
+    cmp eax, ecx
+    je .exec
+    mov edx, [esi + eax]
+    mov [esp + eax], edx
+    inc eax
+    jmp .loopf
+.exec:
+    mov eax, [esp + 4]
+    mov [esp - 4], eax
+    call ebx
+    sub esp, 8
+    mov edx, [0x312589]
+    mov [esp], edx
     ret
 
 global setIdt

@@ -62,6 +62,10 @@ extern string_tokens_t * strtok(const char *, char);
 // Gets the offset for the specified x and y coordinates.
 extern unsigned int getoff(unsigned int, unsigned int);
 
+// Sound playing utilities.
+extern void play_sound(unsigned int nFrequence);
+extern void nosound();
+
 // Beep the speaker.
 extern void beep(void);
 

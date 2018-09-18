@@ -187,7 +187,7 @@ string_tokens_t * strtok(const char * str, char delim) {
 }
 
 //Play sound using built in speaker
-static void play_sound(unsigned int nFrequence) {
+void play_sound(unsigned int nFrequence) {
 	unsigned int Div;
 	unsigned char tmp;
 
@@ -205,7 +205,7 @@ static void play_sound(unsigned int nFrequence) {
 }
 
 //make it shutup
-static void nosound() {
+void nosound() {
 	unsigned char tmp = inb(0x61) & 0xFC;
 	outb(0x61, tmp);
 }

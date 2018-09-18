@@ -102,6 +102,12 @@ void clear(void) {
 }
 
 void scroll(int lines) {
+    //print(htoa(lines, 4));
+    //return;
+    if (lines > 24) {
+        clear();
+        return;
+    }
     char *vidptr = (char*)0xb8000; 	//video mem begins here.
     int i, j;
     /*for (i = lines; i < 25; i++) {
@@ -177,6 +183,7 @@ void print(const char * str) {
             else if (str[j] >= 'a' && str[j] <= 'f') color_code = str[j] - 'a' + 10;
             else if (str[j] >= 'A' && str[j] <= 'F') color_code = str[j] - 'A' + 10;
             else if ((str[j] == 's' || str[j] == 'S') && control == 1) {control = 2; j++; continue;}
+            else if (str[j] == 'r' || str[j] == 'R') {current_settings = 0x07; control = 0; j++; continue;}
             else {control = 0; j++; continue;}
             if (control++ == 1) current_settings = (current_settings & 0x0F) | (color_code << 4);
             else {current_settings = (current_settings & 0xF0) | color_code; control = 0;}
@@ -198,6 +205,18 @@ void print(const char * str) {
 		++j;
 	}
     move(current_offset*2);
+}
+
+void error(const char * str) {
+    print("\03304");
+    print(str);
+    print("\033r");
+}
+
+void warn(const char * str) {
+    print("\0330e");
+    print(str);
+    print("\033r");
 }
 
 const char * scanlm(unsigned int offset) {

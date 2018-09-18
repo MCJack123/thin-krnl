@@ -68,6 +68,10 @@ extern void scroll(int);
 extern void print(const char *);
 // Variation: Print at specified offset. Returns the next offset.
 extern unsigned int printm(const char *, unsigned int);
+// Variation: Prints an error in red.
+extern void error(const char *);
+// Variation: Prints a warning in yellow.
+extern void warn(const char *);
 
 // Reads a line of text at offset.
 extern const char * scanl();
