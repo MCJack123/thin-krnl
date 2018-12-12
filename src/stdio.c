@@ -68,6 +68,15 @@ char getch() {
     return convert_ps2_code(get_scancode());
 }
 
+int getkey() {
+    int retval = 0;
+    unsigned char code = get_scancode();
+    if (code == 0xE0) retval = 0xE000 | get_scancode();
+    else if (code == 0xE1) retval = 0xE00000 | (get_scancode() << 8) | get_scancode();
+    else retval = code;
+    return retval;
+}
+
 unsigned int getoff(unsigned int x, unsigned int y) {
     return ((y * 80) + x) * 2;
 }
@@ -82,7 +91,7 @@ void move(int pos) {
 }
 
 void movec(int x, int y) {
-	move(getoff(x, y) / 2);
+	move(getoff(x, y));
 }
 
 void clear(void) {

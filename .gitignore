@@ -1,3 +1,6 @@
 kernel-src.tar.gz
 .vscode/*
 obj/*
+core
+bin2elf.sh
+disk.img

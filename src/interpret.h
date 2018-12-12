@@ -11,5 +11,6 @@ extern int command_ata_read(int argc, const char * argv[]);
 extern int command_poke(int argc, const char * argv[]);
 extern int command_peek(int argc, const char * argv[]);
 extern int command_call(int argc, const char * argv[]);
+extern int command_hexedit(int argc, const char * argv[]);
 
 #endif

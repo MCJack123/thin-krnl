@@ -10,12 +10,14 @@
 const char* hexnums = "0123456789abcdef";
 
 void rsleep(int t) {
+    int i;
     beep();
-    for (int i = 0; i < t; i++);
+    for (i = 0; i < t; i++);
 }
 
 void rnsleep(int t) {
-    for (int i = 0; i < t; i++);
+    int i;
+    for (i = 0; i < t; i++);
 }
 
 unsigned char inb(unsigned short port)
@@ -46,7 +48,8 @@ void io_wait(void) {
 void memcpy(void * dest, void * src, unsigned int size) {
     char* csrc = (char*)src;
     char* cdest = (char*)dest;
-    for (int i = 0; i < size; i++) cdest[i] = csrc[i];
+    int i;
+    for (i = 0; i < size; i++) cdest[i] = csrc[i];
 }
 
 char htoi(char c) {
@@ -79,6 +82,7 @@ int atoi(const char * str) {
 const char* itoa(unsigned int n) {
     char* buffer;
     int i = 0;
+    int t;
 
     bool isNeg = n<0;
 
@@ -97,7 +101,7 @@ const char* itoa(unsigned int n) {
 
     buffer[i] = '\0';
 
-    for(int t = 0; t < i/2; t++)
+    for(t = 0; t < i/2; t++)
     {
         buffer[t] ^= buffer[i-t-1];
         buffer[i-t-1] ^= buffer[t];
@@ -170,9 +174,10 @@ string_tokens_t * strtok(const char * str, char delim) {
     string_tokens_t * retval;
     int token_lengths[256]; // if there's more the pointer will just overflow; unsafe but should work
     int j, offset = 0;
+    int i;
     retval->count = 0;
     token_lengths[0] = 0;
-    for (int i = 0; str[i] != '\0'; i++) {
+    for (i = 0; str[i] != '\0'; i++) {
         if (str[i] == delim) token_lengths[++retval->count] = 0;
         else token_lengths[retval->count]++;
     }

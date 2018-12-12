@@ -1,6 +1,7 @@
 #include <interpret.h>
 #include <drivers/ata.h>
-#define SYMBOLARR_SIZE 33
+#include <hexedit.h>
+#define SYMBOLARR_SIZE 34
 #if _WIN32 || _WIN64
 #if _WIN64
 #define ENVIRONMENT64
@@ -30,7 +31,8 @@ extern char current_settings;
 
 void print_hex_str(char * buf, unsigned int size) {
     unsigned int * buff = (unsigned int*)buff;
-    for (unsigned int i = 0; i < size / 4; i++) {
+    unsigned int i;
+    for (i = 0; i < size / 4; i++) {
         print(htoa(buff[i], 4));
         print(" ");
     }
@@ -43,6 +45,7 @@ const char * call_symbols_keys[SYMBOLARR_SIZE] = {
     "clear",
     "ctoa",
     "getch",
+    "getkey",
     "get_mem_size",
     "getoff",
     "htoa",
@@ -79,6 +82,7 @@ ptr_t call_symbols_values[SYMBOLARR_SIZE] = {
     (ptr_t)clear,
     (ptr_t)ctoa,
     (ptr_t)getch,
+    (ptr_t)getkey,
     (ptr_t)get_mem_size,
     (ptr_t)getoff,
     (ptr_t)htoa,
@@ -109,7 +113,8 @@ ptr_t call_symbols_values[SYMBOLARR_SIZE] = {
 };
 
 ptr_t map_find(const char * key) {
-    for (int i = 0; i < SYMBOLARR_SIZE; i++)
+    int i;
+    for (i = 0; i < SYMBOLARR_SIZE; i++)
         if (strcmp(key, call_symbols_keys[i])) 
             return call_symbols_values[i];
     return 0;
@@ -127,6 +132,7 @@ bool run_command(const char * command) {
     else if (strcmp(tok->tokens[0], "poke")) last_return = command_poke(tok->count, tok->tokens);
     else if (strcmp(tok->tokens[0], "peek")) last_return = command_peek(tok->count, tok->tokens);
     else if (strcmp(tok->tokens[0], "call")) last_return = command_call(tok->count, tok->tokens);
+    else if (strcmp(tok->tokens[0], "hexedit")) last_return = command_hexedit(tok->count, tok->tokens);
     else if (strcmp(tok->tokens[0], "ata_read")) last_return = command_ata_read(tok->count, tok->tokens);
     else if (strcmp(tok->tokens[0], "reboot")) callC(0xffff0, 0x00, 0x00);
     else if (strcmp(tok->tokens[0], "exit")) return true;
@@ -141,6 +147,7 @@ int command_help() {
 "\tpeek <addr|'settings'>: Get the value of the address\n"\
 "\tcall <addr|*symbol> [<d|w|b|s>arg1] [<d|w|b|s>args...]: Call addr or symbol with arguments\n"\
 "\techo <text...>: Print the text to the screen\n"\
+"\thexedit <address>: Edits memory starting at an address\n"\
 "\tsymbols: Show symbols available to call\n"\
 "\tretval: Display last return value\n"\
 "\thelp: Display this help\n"\
@@ -156,8 +163,9 @@ int command_retval() {
 }
 
 int command_symbols() {
+    int i;
     print("Symbols available: ");
-    for (int i = 0; i < SYMBOLARR_SIZE; i++) {
+    for (i = 0; i < SYMBOLARR_SIZE; i++) {
         print(call_symbols_keys[i]);
         print(" ");
     }
@@ -166,7 +174,8 @@ int command_symbols() {
 }
 
 int command_echo(int argc, const char * argv[]) {
-    for (int i = 1; i < argc; i++) {print(argv[i]); print(" ");}
+    int i;
+    for (i = 1; i < argc; i++) {print(argv[i]); print(" ");}
     print("\n");
     return 0; 
 }
@@ -265,6 +274,16 @@ int command_call(int argc, const char * argv[]) {
     }
     //print(htoa(addr, 4));
     callC(addr, total, args);
+    return 0;
+}
+
+int command_hexedit(int argc, const char * argv[]) {
+    unsigned int offset;
+    if (argc < 2) {
+        error("Error: Too few arguments\n");
+    }
+    offset = (unsigned int)atoi(argv[1]);
+    memedit((char*)offset);
     return 0;
 }
 

@@ -7,6 +7,10 @@
 #define THINKRNL_STDIO_H
 #include <stdlib.h>
 
+// Dimensions
+#define COLS 80
+#define ROWS 25
+
 // PS/2 special keyboard codes.
 typedef enum ps2code_ext_t {
     PS2CODE_EXT_ESC = 0x01,
@@ -46,6 +50,9 @@ enum modifiers {
 
 // Gets a key from the keyboard.
 extern char getch(void);
+
+// Gets a scancode from the keyboard.
+extern int getkey(void);
 
 // Returns a ps2_ext_t for a PS/2 code.
 extern ps2code_ext_t getcode(char);

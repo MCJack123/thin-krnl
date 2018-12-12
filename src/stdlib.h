@@ -8,9 +8,13 @@
 #include <liballoc.h>
 
 /* = bool defs = */
+#ifndef __cplusplus
+#ifndef _STDLIB_H
 #define true 1
 #define false 0
 typedef _Bool bool;
+#endif
+#endif
 /* ============= */
 
 typedef struct {
