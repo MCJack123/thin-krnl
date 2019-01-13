@@ -2,34 +2,8 @@
 #define THINKRNL_DRIVER_ATA_H
 #include <stdlib.h>
 
-#define REG_CYL_LO 4
-#define REG_CYL_HI 5
-#define REG_DEVSEL 6
-
-enum atadev_type {
-    ATADEV_PATAPI,
-    ATADEV_SATAPI,
-    ATADEV_PATA,
-    ATADEV_SATA,
-    ATADEV_UNKNOWN
-};
-
-struct DEVICE {
-    unsigned short base;
-    unsigned short dev_ctl;
-};
-
-struct driverdata {
-    unsigned int partition_size;
-    unsigned char dcr;
-    unsigned int start_lba;
-    unsigned short task_file;
-    unsigned char slavebit;
-};
-
-extern void ata_soft_reset(struct DEVICE *dev);
-extern int ata_detect_dev_type(bool slavebit, struct DEVICE *ctrl);
-//extern void ata_read_sectors(void * dest, unsigned short sectors, unsigned int lba, struct devicedata *device);
-extern void ata_lba_read(void * dest, unsigned short sectors, unsigned int lba);
+extern void ata_set_base(unsigned short);
+extern void ata_soft_reset(void);
+extern bool ata_check_drive(bool, unsigned short *);
 
 #endif
