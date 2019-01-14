@@ -1,7 +1,7 @@
 #include <interpret.h>
 #include <drivers/ata.h>
 #include <hexedit.h>
-#define SYMBOLARR_SIZE 34
+#define SYMBOLARR_SIZE 36
 #if _WIN32 || _WIN64
 #if _WIN64
 #define ENVIRONMENT64
@@ -39,6 +39,8 @@ void print_hex_str(char * buf, unsigned int size) {
 }
 
 const char * call_symbols_keys[SYMBOLARR_SIZE] = {
+    "ata_read_sectors",
+    "ata_soft_reset",
     "atoi",
     "beep",
     "callC",
@@ -76,6 +78,8 @@ const char * call_symbols_keys[SYMBOLARR_SIZE] = {
 };
 
 ptr_t call_symbols_values[SYMBOLARR_SIZE] = {
+    (ptr_t)ata_read_sectors,
+    (ptr_t)ata_soft_reset,
     (ptr_t)atoi,
     (ptr_t)beep,
     (ptr_t)callC,
@@ -124,7 +128,7 @@ int last_return = 0;
 
 bool run_command(const char * command) {
     string_tokens_t * tok = strtok(command, ' ');
-    if (tok->count == 0) return false;
+    if (tok->count == 0 || strcmp(tok->tokens[0], "")) return false;
     if (strcmp(tok->tokens[0], "help")) last_return = command_help();
     else if (strcmp(tok->tokens[0], "retval")) last_return = command_retval();
     else if (strcmp(tok->tokens[0], "symbols")) last_return = command_symbols();
@@ -190,7 +194,8 @@ int command_ata_read(int argc, const char * argv[]) {
     sectors = atoi(argv[1]);
     lba = atoi(argv[2]);
     buf = malloc(sectors*512);
-    ata_lba_read(buf, (unsigned short)sectors, (unsigned int)lba);
+    ata_soft_reset();
+    ata_read_sectors(false, (unsigned char)sectors, lba, (unsigned short *)buf);
     if (argc > 3 && argv[3][0] == 'h') print_hex_str((char*)buf, sectors*512);
     else print((const char*)buf);
     print("\n");

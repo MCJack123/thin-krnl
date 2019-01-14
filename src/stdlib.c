@@ -11,7 +11,7 @@ const char* hexnums = "0123456789abcdef";
 
 void rsleep(int t) {
     int i;
-    beep();
+    //beep();
     for (i = 0; i < t; i++);
 }
 
@@ -45,11 +45,12 @@ void io_wait(void) {
                    "2:" );
 }
 
-void memcpy(void * dest, void * src, unsigned int size) {
+void * memcpy(void * dest, void * src, unsigned int size) {
     char* csrc = (char*)src;
     char* cdest = (char*)dest;
     int i;
     for (i = 0; i < size; i++) cdest[i] = csrc[i];
+    return dest;
 }
 
 char htoi(char c) {

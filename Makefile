@@ -10,12 +10,15 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 _OBJ = kasm.o kernel.o interrupt.o kernel_alloc.o liballoc.o stdio.o stdlib.o interpret.o hexedit.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-_DRIVER_OBJ = ata.o asm_ata.o
+_DRIVER_OBJ = ata.o
 DRIVER_OBJ = $(patsubst %,$(ODIR)/driver_%,$(_DRIVER_OBJ))
 
-kernel: $(OBJ) $(DRIVER_OBJ)
+_FS_OBJ = fs.o fat.o
+FS_OBJ = $(patsubst %,$(ODIR)/fs_%,$(_DRIVER_OBJ))
+
+kernel: $(OBJ) $(DRIVER_OBJ) $(FS_OBJ)
 	$(info $< $@)
-	ld -m elf_i386 -T link.ld -o kernel $(OBJ) $(DRIVER_OBJ)
+	ld -m elf_i386 -T link.ld -o kernel $(OBJ) $(DRIVER_OBJ) $(FS_OBJ)
 
 obj/liballoc.o: src/liballoc.c src/liballoc.h
 	$(info $< $@)
@@ -36,3 +39,7 @@ obj/driver_%.o: src/drivers/%.c src/drivers/%.h $(DEPS)
 obj/driver_asm_%.o: src/drivers/%.asm
 	$(info $< $@)
 	nasm -f elf32 $< -o $@
+
+obj/fs_%.o: src/fs/%.cpp src/fs/%.hpp src/fs/fs_base.hpp src/fs/fs.h $(DEPS)
+	$(info $< $@)
+	g++ $(CFLAGS) -c $< -o $@

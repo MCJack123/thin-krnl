@@ -14,7 +14,6 @@ void kmain(void) {
     const char * done = " Done.\n";
     void * buf = (void*)0x500000;
     unsigned int i;
-    struct driverdata disk;
     //lasm("sti");
     clear();
 	print("Calculating memory...\n");

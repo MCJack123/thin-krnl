@@ -17,6 +17,10 @@ typedef _Bool bool;
 #endif
 /* ============= */
 
+#ifndef NULL
+#define NULL 0
+#endif
+
 typedef struct {
     int count;
     char * tokens[];
@@ -37,7 +41,7 @@ extern unsigned int* get_mem_size(void);
 extern void rsleep(int);
 
 // Copies memory.
-extern void memcpy(void*, void*, unsigned int);
+extern void * memcpy(void*, void*, unsigned int);
 
 // Returns an int with the value of the string.
 extern int atoi(const char *);
